@@ -20,7 +20,12 @@ public class DatabaseManager : SqLiteConnector, IDatabaseManager
                     sold TEXT NOT NULL
         );";
 
-    private const string UsersTableStatement = "";
+    private const string UsersTableStatement = 
+        @$"CREATE TABLE IF NOT EXISTS {UsersTableName} (
+                    id INTEGER PRIMARY KEY,
+                    user_name TEXT UNIQUE,
+                    password TEXT NOT NULL
+        );";
 
     private const string TransactionsTableStatement =
         @$"CREATE TABLE IF NOT EXISTS {TransactionsTableName} (
