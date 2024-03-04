@@ -10,7 +10,15 @@ public class DatabaseManager : SqLiteConnector, IDatabaseManager
     public const string UsersTableName = "users";
     public const string TransactionsTableName = "transactions";
 
-    private const string ProductsTableStatement = "";
+    private const string ProductsTableStatement = 
+        @$"CREATE TABLE IF NOT EXISTS {ProductsTableName} (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT UNIQUE,
+                    color TEXT NOT NULL,
+                    season TEXT NOT NULL,
+                    price DOUBLE NOT NULL,
+                    sold TEXT NOT NULL
+        );";
 
     private const string UsersTableStatement = "";
 
