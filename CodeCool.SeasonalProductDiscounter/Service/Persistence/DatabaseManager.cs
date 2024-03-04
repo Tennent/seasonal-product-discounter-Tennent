@@ -16,8 +16,8 @@ public class DatabaseManager : SqLiteConnector, IDatabaseManager
                     name TEXT UNIQUE,
                     color TEXT NOT NULL,
                     season TEXT NOT NULL,
-                    price DOUBLE NOT NULL,
-                    sold TEXT NOT NULL
+                    price REAL NOT NULL,
+                    sold INT NOT NULL
         );";
 
     private const string UsersTableStatement = 
