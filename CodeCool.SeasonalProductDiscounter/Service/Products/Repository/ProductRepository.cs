@@ -19,10 +19,10 @@ public class ProductRepository : SqLiteConnector, IProductRepository
 
     private IEnumerable<Product> GetAvailableProducts()
     {
-        var query = 
+        var query =
             @"SELECT * FROM products
                WHERE sold = 0";
-        
+
         var ret = new List<Product>();
 
         try
@@ -43,7 +43,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
                     reader.GetDouble(reader.GetOrdinal("price")),
                     reader.GetBoolean(reader.GetOrdinal("sold"))
                 );
-                
+
                 ret.Add(product);
             }
         }
@@ -58,7 +58,16 @@ public class ProductRepository : SqLiteConnector, IProductRepository
 
     public bool Add(IEnumerable<Product> products)
     {
-        //
+        foreach (var product in products)
+        {
+            var query =
+                @$"INSERT INTO products
+                VALUES {product}";
+
+            var success = ExecuteNonQuery(query);
+            if (success) return true;
+        }
+
         return false;
     }
 
