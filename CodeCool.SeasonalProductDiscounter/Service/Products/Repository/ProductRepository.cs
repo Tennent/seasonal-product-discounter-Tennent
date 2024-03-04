@@ -19,7 +19,10 @@ public class ProductRepository : SqLiteConnector, IProductRepository
 
     private IEnumerable<Product> GetAvailableProducts()
     {
-        var query ="";
+        var query = 
+            @"SELECT * FROM products
+               WHERE sold = 0";
+        
         var ret = new List<Product>();
 
         try
@@ -31,12 +34,22 @@ public class ProductRepository : SqLiteConnector, IProductRepository
 
             while (reader.Read())
             {
-                //
+                var product = new Product
+                (
+                    (uint)reader.GetInt32(reader.GetOrdinal("id")),
+                    reader.GetString(reader.GetOrdinal("name")),
+                    TypeConverters.GetColorEnum(reader.GetString(reader.GetOrdinal("color"))),
+                    TypeConverters.GetSeasonEnum(reader.GetString(reader.GetOrdinal("season"))),
+                    reader.GetDouble(reader.GetOrdinal("price")),
+                    reader.GetBoolean(reader.GetOrdinal("sold"))
+                );
+                
+                ret.Add(product);
             }
         }
         catch (Exception e)
         {
-            Logger.LogError(e.Message);
+            Logger.LogError("Error retrieving available products!\n" + e.Message);
             throw;
         }
 
