@@ -16,14 +16,14 @@ class Program
 
     public static void Main(string[] args)
     {
-        ILogger logger = null;
+        ILogger logger = new ConsoleLogger();
         string dbFile = WorkDir + "\\Resources\\SeasonalProductDiscounter.db";
 
-        IDatabaseManager dbManager = null;
+        IDatabaseManager dbManager = new DatabaseManager(dbFile, logger);
 
         dbManager.CreateTables();
 
-        IProductRepository productRepository = null;
+        IProductRepository productRepository = new ProductRepository(dbFile, logger);
         IDiscountRepository discountRepository = null;
         IUserRepository userRepository = null;
         ITransactionRepository transactionRepository = null;
@@ -47,7 +47,7 @@ class Program
         if (!productRepository.AvailableProducts.Any())
         {
             var randomProductGenerator = new RandomProductGenerator(1000, 20, 80);
-            //add products to repo
+            productRepository.Add(randomProductGenerator.Products);
         }
     }
 
