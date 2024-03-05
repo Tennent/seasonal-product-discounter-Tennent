@@ -13,7 +13,7 @@ public class DatabaseManager : SqLiteConnector, IDatabaseManager
     private const string ProductsTableStatement = 
         @$"CREATE TABLE IF NOT EXISTS {ProductsTableName} (
                     id INTEGER PRIMARY KEY,
-                    name TEXT UNIQUE,
+                    name TEXT NOT NULL,
                     color TEXT NOT NULL,
                     season TEXT NOT NULL,
                     price REAL NOT NULL,
