@@ -21,7 +21,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
     {
         var query =
             @"SELECT * FROM products
-               WHERE sold = 0";
+            WHERE sold = 0";
 
         var ret = new List<Product>();
 
@@ -61,14 +61,14 @@ public class ProductRepository : SqLiteConnector, IProductRepository
         foreach (var product in products)
         {
             var query =
-                @$"INSERT INTO products
-                VALUES {product}";
+                $@"INSERT INTO products (id, name, color, season, price, sold)
+                VALUES ({product.Id}, '{product.Name}', '{product.Color}', '{product.Season}', '{product.Price}', {TypeConverters.ToInt(product.Sold)})";
 
             var success = ExecuteNonQuery(query);
-            if (success) return true;
+            if (!success) return false;
         }
 
-        return false;
+        return true;
     }
 
     public bool SetProductAsSold(Product product)
