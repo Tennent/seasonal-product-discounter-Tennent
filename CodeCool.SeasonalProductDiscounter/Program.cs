@@ -24,11 +24,11 @@ class Program
         dbManager.CreateTables();
 
         IProductRepository productRepository = new ProductRepository(dbFile, logger);
-        IDiscountRepository discountRepository = null;
-        IUserRepository userRepository = null;
-        ITransactionRepository transactionRepository = null;
-        IAuthenticationService authenticationService = null;
-        IDiscounterService discounterService = null;
+        IDiscountRepository discountRepository = new DiscountRepository();
+        IUserRepository userRepository = new UserRepository(dbFile, logger);
+        ITransactionRepository transactionRepository = new TransactionRepository(dbFile, logger);
+        IAuthenticationService authenticationService = new AuthenticationService(userRepository);
+        IDiscounterService discounterService = new DiscounterService(discountRepository);
 
         InitializeDatabase(productRepository);
 
@@ -36,7 +36,7 @@ class Program
             authenticationService, discounterService, transactionRepository);
 
 
-        //RunSimulation(simulator, productRepository, transactionRepository);
+        RunSimulation(simulator, productRepository, transactionRepository);
 
         Console.WriteLine("Press any key to exit.");
         Console.ReadKey();
@@ -53,11 +53,11 @@ class Program
 
     private static void RunSimulation(TransactionsSimulator simulator, IProductRepository productRepository, ITransactionRepository transactionRepository)
     {
-        int days = 0;
+        int days = 1;
         var date = DateTime.Today;
-
+        
         // set your own condition
-        while (true)
+        while (days != 0)
         {
             Console.WriteLine("Starting simulation...");
             simulator.Run(new TransactionsSimulatorSettings(date, 100, 70));
@@ -66,6 +66,7 @@ class Program
 
             Console.WriteLine($"{date} ended, total transactions: {transactions.Count}, total income: {transactions.Sum(t => t.PricePaid)}");
             Console.WriteLine($"Products left to sell: {productRepository.AvailableProducts.Count()}");
+            days--;
         }
     }
 }
