@@ -8,13 +8,16 @@ namespace CodeCool.SeasonalProductDiscounter.Service.Users;
 
 public class UserRepository : SqLiteConnector, IUserRepository
 {
+    private readonly string _tableName;
+
     public UserRepository(string dbFile, ILogger logger) : base(dbFile, logger)
     {
+        _tableName = DatabaseManager.UsersTableName;
     }
 
     public IEnumerable<User> GetAll()
     {
-        var query = @$"SELECT * FROM {DatabaseManager.UsersTableName}";
+        var query = @$"SELECT * FROM {_tableName}";
         var ret = new List<User>();
 
         try
@@ -40,8 +43,10 @@ public class UserRepository : SqLiteConnector, IUserRepository
 
     public bool Add(User user)
     {
-        //
-        return false;
+        var query = @$"INSERT INTO {_tableName} (id, user_name, password)
+                    VALUES ({user.Id}, '{user.UserName}', '{user.Password}')";
+        
+        return ExecuteNonQuery(query);
     }
 
     public User Get(string name)
