@@ -19,15 +19,17 @@ public class TransactionRepository : SqLiteConnector, ITransactionRepository
 
     public bool Add(Transaction transaction)
     {
-        var query = @$"INSERT INTO {_tableName} (id, date, user_id, product_id, price_paid)
-                    VALUES ({transaction.Id}, '{transaction.Date}', {transaction.User.Id}, {transaction.Product.Id}, '{transaction.PricePaid}')";
-        
+        var query = @$"INSERT INTO {_tableName} (date, user_id, product_id, price_paid)
+                    VALUES ('{transaction.Date}', {transaction.User.Id}, {transaction.Product.Id}, '{transaction.PricePaid}')";
+
         return ExecuteNonQuery(query);
     }
 
     public IEnumerable<Transaction> GetAll()
     {
-        var query = "";
+        var query = @$"SELECT * FROM {_tableName}
+                    INNER JOIN {DatabaseManager.UsersTableName} on {DatabaseManager.UsersTableName}.Id = {_tableName}.user_id
+                    INNER JOIN {DatabaseManager.ProductsTableName} on {DatabaseManager.ProductsTableName}.Id = {_tableName}.product_id";
 
         try
         {
@@ -66,22 +68,45 @@ public class TransactionRepository : SqLiteConnector, ITransactionRepository
 
     private static User ToUser(DataRow row)
     {
-        var id = TypeConverters.ToInt(row["u_id"]);
+        var id = TypeConverters.ToInt(row["user_id"]);
+        var user = new User
+        (
+            id,
+            TypeConverters.ToString(row["user_name"]),
+            TypeConverters.ToString(row["password"])
+        );
 
-        return null;
+        return user;
     }
 
     private static Product ToProduct(DataRow row)
     {
-        var id = TypeConverters.ToInt(row["p_id"]);
+        var id = TypeConverters.ToInt(row["product_id"]);
+        var product = new Product
+        (
+            (uint)id,
+            TypeConverters.ToString(row["name"]),
+            TypeConverters.GetColorEnum(TypeConverters.ToString(row["color"])),
+            TypeConverters.GetSeasonEnum(TypeConverters.ToString(row["season"])),
+            TypeConverters.ToDouble(row["price"]),
+            TypeConverters.ToBool(TypeConverters.ToInt(row["sold"]))
+        );
 
-        return null;
+        return product;
     }
 
     private static Transaction ToTransaction(DataRow row, User user, Product product)
     {
-        var id = TypeConverters.ToInt(row["t_id"]);
+        var id = TypeConverters.ToInt(row["id"]);
+        var transaction = new Transaction
+        (
+            id,
+            TypeConverters.ToDateTime(TypeConverters.ToString(row["date"])),
+            user,
+            product,
+            TypeConverters.ToDouble(row["price_paid"])
+        );
 
-        return null;
+        return transaction;
     }
 }
