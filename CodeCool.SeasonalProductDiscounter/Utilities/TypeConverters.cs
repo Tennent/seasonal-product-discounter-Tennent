@@ -11,4 +11,5 @@ public static class TypeConverters
     public static double ToDouble(object obj) => Convert.ToDouble(obj);
     public static string ToString(object obj) => obj.ToString() ?? "";
     public static DateTime ToDateTime(string s) => DateTime.Parse(s);
+    public static bool ToBool(int i) => Convert.ToBoolean(i);
 }
