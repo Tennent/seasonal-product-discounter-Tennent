@@ -19,8 +19,10 @@ public class TransactionRepository : SqLiteConnector, ITransactionRepository
 
     public bool Add(Transaction transaction)
     {
-        //
-        return false;
+        var query = @$"INSERT INTO {_tableName} (id, date, user_id, product_id, price_paid)
+                    VALUES ({transaction.Id}, '{transaction.Date}', {transaction.User.Id}, {transaction.Product.Id}, '{transaction.PricePaid}')";
+        
+        return ExecuteNonQuery(query);
     }
 
     public IEnumerable<Transaction> GetAll()
@@ -74,7 +76,6 @@ public class TransactionRepository : SqLiteConnector, ITransactionRepository
         var id = TypeConverters.ToInt(row["p_id"]);
 
         return null;
-
     }
 
     private static Transaction ToTransaction(DataRow row, User user, Product product)
