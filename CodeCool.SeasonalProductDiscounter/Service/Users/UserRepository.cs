@@ -51,17 +51,36 @@ public class UserRepository : SqLiteConnector, IUserRepository
 
     public User Get(string name)
     {
-        var query = "";
+        var query = @$"SELECT * FROM {_tableName}
+                    WHERE user_name = {name}";
+
+        User ret = null;
 
         try
         {
-            //
-            return null;
+            using var connection = GetPhysicalDbConnection();
+            using var command = GetCommand(query, connection);
+            using var reader = command.ExecuteReader();
+            Logger.LogInfo($"{GetType().Name} executing query: {query}");
+
+            while (reader.Read())
+            {
+                var user = new User
+                (
+                    reader.GetInt32(reader.GetOrdinal("id")),
+                    reader.GetString(reader.GetOrdinal("user_name")),
+                    reader.GetString(reader.GetOrdinal("password"))
+                );
+
+                ret = user;
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error retrieving user: {name}!\n" + e.Message);
             throw;
         }
+
+        return ret;
     }
 }
