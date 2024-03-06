@@ -15,6 +15,9 @@ public class AuthenticationService : IAuthenticationService
 
     public bool Authenticate(User user)
     {
-        return false;
+        var loginUser = _userRepository.Get(user.UserName);
+        if (loginUser is null) return false;
+        
+        return loginUser.UserName == user.UserName && loginUser.Password == user.Password; 
     }
 }
