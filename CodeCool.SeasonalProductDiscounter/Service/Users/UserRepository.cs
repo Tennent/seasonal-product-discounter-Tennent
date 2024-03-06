@@ -43,8 +43,8 @@ public class UserRepository : SqLiteConnector, IUserRepository
 
     public bool Add(User user)
     {
-        var query = @$"INSERT INTO {_tableName} (id, user_name, password)
-                    VALUES ({user.Id}, '{user.UserName}', '{user.Password}')";
+        var query = @$"INSERT INTO {_tableName} (user_name, password)
+                    VALUES ('{user.UserName}', '{user.Password}')";
         
         return ExecuteNonQuery(query);
     }
@@ -52,7 +52,7 @@ public class UserRepository : SqLiteConnector, IUserRepository
     public User Get(string name)
     {
         var query = @$"SELECT * FROM {_tableName}
-                    WHERE user_name = {name}";
+                    WHERE user_name = '{name}'";
 
         User ret = null;
 
@@ -65,20 +65,17 @@ public class UserRepository : SqLiteConnector, IUserRepository
 
             while (reader.Read())
             {
-                var user = new User
+                ret = new User
                 (
                     reader.GetInt32(reader.GetOrdinal("id")),
                     reader.GetString(reader.GetOrdinal("user_name")),
                     reader.GetString(reader.GetOrdinal("password"))
                 );
-
-                ret = user;
             }
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error retrieving user: {name}!\n" + e.Message);
-            throw;
         }
 
         return ret;
