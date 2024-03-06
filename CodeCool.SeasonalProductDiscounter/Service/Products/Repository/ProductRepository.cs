@@ -20,7 +20,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
     private IEnumerable<Product> GetAvailableProducts()
     {
         var query =
-            @"SELECT * FROM products
+            @$"SELECT * FROM {_tableName}
             WHERE sold = 0";
 
         var ret = new List<Product>();
@@ -61,7 +61,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
         foreach (var product in products)
         {
             var query =
-                $@"INSERT INTO products (id, name, color, season, price, sold)
+                @$"INSERT INTO {_tableName} (id, name, color, season, price, sold)
                 VALUES ({product.Id}, '{product.Name}', '{product.Color}', '{product.Season}', '{product.Price}', {TypeConverters.ToInt(product.Sold)})";
 
             var success = ExecuteNonQuery(query);
@@ -75,7 +75,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
     {
         //Set the sold field in the database
         var query = 
-            @$"UPDATE products
+            @$"UPDATE {_tableName}
             SET sold = 1
             WHERE id = {product.Id}";
         
