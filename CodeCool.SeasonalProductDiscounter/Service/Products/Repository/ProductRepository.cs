@@ -30,7 +30,7 @@ public class ProductRepository : SqLiteConnector, IProductRepository
             using var connection = GetPhysicalDbConnection();
             using var command = GetCommand(query, connection);
             using var reader = command.ExecuteReader();
-            Logger.LogInfo($"{GetType().Name} executing query: {query}");
+            // Logger.LogInfo($"{GetType().Name} executing query: {query}");
 
             while (reader.Read())
             {
